@@ -15,7 +15,7 @@ app = Flask(__name__)
 """
 The table "products" in db contains items with the following fields
     id SERIAL PRIMARY KEY,
-    product_id integer NOT NULL,
+    product_category integer NOT NULL,
     name varchar(1000) NOT NULL,
     price numeric NOT NULL
 Return: List of all product items
@@ -35,7 +35,7 @@ def get_product_items():
         cur.execute(f"""SELECT * FROM product_items """)
         items = cur.fetchall()
         # convert arrays into objects
-        items = [{"id":i[0], "product_id": i[1], "name": i[2], "price": i[3] } for i in items]
+        items = [{"id":i[0], "product_category": i[1], "name": i[2], "price": i[3] } for i in items]
 
         return jsonify(items), 200
 
@@ -45,14 +45,15 @@ def get_product_items():
     finally:
         cur.close()
         conn.close()
+
 """
-This method list its items filtered by product_id
+This method list its items filtered by product_category
 Request parameters:
-    product_id
+    product_category
 Return: List of product items
 """
-@app.route('/product_items/<product_id>')
-def get_filtered_product_items(product_id):
+@app.route('/product_items/<product_category>')
+def get_filtered_product_items(product_category):
     try:
         conn = psycopg2.connect(
             host=HOST,
@@ -63,47 +64,16 @@ def get_filtered_product_items(product_id):
 
         cur = conn.cursor()
 
-        cur.execute(f"""SELECT * FROM product_items WHERE product_id={product_id}""")
+        cur.execute(f"""SELECT * FROM product_items WHERE product_category={product_category}""")
         items = cur.fetchall()
         # convert arrays into objects
-        items = [{"id":i[0], "product_id": i[1], "name": i[2], "price": i[3] } for i in items]
+        items = [{"id":i[0], "product_category": i[1], "name": i[2], "price": i[3] } for i in items]
 
         return jsonify(items), 200
 
     except Exception as e:
         return jsonify(e.messages), 400
 
-    finally:
-        cur.close()
-        conn.close()
-
-"""
-Update price of item from "product_items" table.
-Request paramaters:
-    - id
-    - price
-
-"""
-@app.route('/update_product_price', methods=['PUT'])
-def update_product_price():
-    params = request.json
-    try:
-        conn = psycopg2.connect(
-            host=HOST,
-            port=PORT,
-            database=DATABASE,
-            user=USERNAME,
-            password=PASSWORD)
-
-        cur = conn.cursor()
-        cur.execute(f"""UPDATE product_items SET price = {params['price']}
-                    WHERE product_items.id = {params['id']})""")
-        conn.commit()
-
-        return "The product price was successefully updated", 200
-
-    except Exception as e:
-        return jsonify(e.messages), 400
     finally:
         cur.close()
         conn.close()
@@ -113,10 +83,10 @@ def update_product_price():
 """
 Delete items for a product from "product_items" table.
 Request paramaters:
-    - product_id
+    - product_category
 """
-@app.route('/product/<product_id>', methods=['DELETE'])
-def delete_product(product_id):
+@app.route('/product/<product_category>', methods=['DELETE'])
+def delete_product(product_category):
     try:
         conn = psycopg2.connect(
             host=HOST,
@@ -127,10 +97,10 @@ def delete_product(product_id):
 
         cur = conn.cursor()
 
-        cur.execute(f"""DELETE FROM product_items WHERE product_id = {product_id}""")
+        cur.execute(f"""DELETE FROM product_items WHERE product_category = {product_category}""")
         conn.commit()
 
-        return f"Product {product_id} was successefully deleted", 200
+        return f"Product {product_category} was successefully deleted", 200
 
     except Exception as e:
         return jsonify(e.messages), 400
