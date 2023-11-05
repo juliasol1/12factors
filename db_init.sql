@@ -5,6 +5,7 @@ CREATE TABLE product_items (
     price numeric NOT NULL
 );
 
+INSERT INTO product_items (product_id, name, price) VALUES
 (1,'Awesome Fresh Pants',18591),
 (1,'Gently Used Gloves',30718),
 (1,'Mouse',51617),
