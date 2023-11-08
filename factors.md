@@ -1,6 +1,6 @@
 1.Codebase
 One codebase tracked in revision control, many deploys.
-⁃	I used GitHub for source control, the repository can be accessed by https://github.com/juliasol1/12factors
+⁃	I used GitHub for source control.
 
 2.Dependencies
 Explicitly declare and isolate dependencies.
